@@ -50,22 +50,18 @@ public class LongestWordinDict {
         
         HashMap testStringHash = splitStringtoHash(testString);
         
-        System.out.println(testWordList);
-        System.out.println(testStringHash);
-        
         for (String word : testWordList) {
             
             if (validateWord(word, testStringHash)) {
                 System.out.println(word + " passed validation");
                 
                 if (word.length()>longestWord.length()) {
-                    // If so, save new word to longest word
                     longestWord = word;
                 }
                 
             }
             
-        } // end for (string : word) 
+        } // end for 
         
         System.out.println("Longest word is " + longestWord);
         

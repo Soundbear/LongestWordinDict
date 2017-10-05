@@ -24,44 +24,67 @@ public class LongestWordinDict {
     
     private static final String testStringPrompt = "Enter the string you would like to test against: ";
     private static final String quitString = "<q>";
-    private static final String testSetPrompt = "Enter a string to add to the word set (Enter " + quitString + " to end input) :";
+    private static final String testWordPrompt = "Enter a string to add to the word set (Enter " + quitString + " to end input) :";
+    
+    private static boolean useSample = true;
+    
+    private static final String sampleString = "abppplle";
+    private static final List<String> sampleWordList = new ArrayList<String>(Arrays.asList("able", "apple", "bale", "pale", "kangaroo"));
     
     
     public static void main(String[] args) {
+        
         String longestWord = "";
         
-        String S = assignStringInput(testStringPrompt);
-        // System.out.println("Entered " + S);
-        String[] D = assignDictInput(testSetPrompt);
-        // System.out.println(Arrays.toString(D));
-        // Put string in hash map with count of character in Value with character as Key
-        HashMap testStringHash = splitStringtoHash(S);
+        String testString;
+        List<String> testWordList;
         
-        // For each word in the test collection, break out into hashmap similar to test string
-        for (String word : D) {
+        if (useSample) {
+            testString = sampleString;
+            testWordList = sampleWordList;
+        }
+        else {
+            testString = assignStringInput(testStringPrompt);
+            testWordList = assignWordInput(testWordPrompt);
+        }
+        
+        HashMap testStringHash = splitStringtoHash(testString);
+        
+        System.out.println(testWordList);
+        System.out.println(testStringHash);
+        
+        for (String word : testWordList) {
+            
             if (validateWord(word, testStringHash)) {
                 System.out.println(word + " passed validation");
-                // If successful, check if new string is longer than previous longest string
+                
                 if (word.length()>longestWord.length()) {
                     // If so, save new word to longest word
                     longestWord = word;
                 }
+                
             }
+            
         } // end for (string : word) 
+        
         System.out.println("Longest word is " + longestWord);
+        
     } // end main method
     
     public static String assignStringInput(String prompt) {
         System.out.println(prompt);
+        
         Scanner sc = new Scanner(System.in);
-        String testStringIn = sc.nextLine();
-        return testStringIn;
+        String inputString = sc.nextLine();
+        
+        return inputString;
     }
     
-    public static String[] assignDictInput(String prompt) {
-        Scanner sc = new Scanner(System.in);
+    public static List<String> assignWordInput(String prompt) {
+        List<String> inputWordAL = new ArrayList();
+        Scanner sc = new Scanner(System.in);        
+        
         boolean gettingInput = true;
-        List<String> wordAL = new ArrayList();
         
         while (gettingInput) {
             System.out.println(prompt);
@@ -71,50 +94,58 @@ public class LongestWordinDict {
                 gettingInput = false;
             }
             else {
-                wordAL.add(inString);
+                inputWordAL.add(inString);
                 System.out.println("Added " + inString);
             }
+            
         } // end while
-        String[] returnArray = new String[wordAL.size()];
-        return wordAL.toArray(returnArray);
+        
+        return inputWordAL;
+        
     }
     
     public static HashMap splitStringtoHash(String inString) {
-        String[] arrInString = inString.split("");
         
+        String[] arrInString = inString.split("");
         HashMap<String,Integer> letterMap = new HashMap<>();
         
         for (String letter : arrInString) {
+            
             if (!letterMap.containsKey(letter)){
                 letterMap.put(letter, 1);
             }
             else {
                 letterMap.put(letter, letterMap.get(letter)+1);
             }
+            
         }
+        
         return letterMap;
+        
     }
     
     public static boolean validateWord(String inWord, HashMap inTestHash) {
+        
         boolean isValidWord = true;
         HashMap currWordHash = splitStringtoHash(inWord);
-            Set letterSet = currWordHash.keySet();
-            // System.out.println(letterSet);
-            // For each letter in word check if in the test string, if so, is the Value less than or equal to the Value in the test string
-            Iterator letterIt = letterSet.iterator();
-            while (letterIt.hasNext()) {
-                String currLetter = letterIt.next().toString();
-                // System.out.println(currLetter);
-                Integer wordLetterCount = (Integer) currWordHash.get(currLetter);
-                Integer testStrLetterCount = (Integer) inTestHash.get(currLetter);
-                if (!inTestHash.containsKey(currLetter) 
-                        || (wordLetterCount > testStrLetterCount) ) {
-                    // If at any point there's a bad value, exit and go to next word
-                    System.out.println(inWord + " failed validation on " + currLetter);
-                    isValidWord = false;
-                    break;
-                }
+       
+        Iterator letterIt = currWordHash.keySet().iterator();
+        
+        while (letterIt.hasNext()) {
+            
+            String currLetter = letterIt.next().toString();
+            
+            int wordLetterCount = (int) currWordHash.get(currLetter);
+            int testStrLetterCount = (int) inTestHash.get(currLetter);
+            
+            if (!inTestHash.containsKey(currLetter) || (wordLetterCount > testStrLetterCount) ) {
+                
+                System.out.println(inWord + " failed validation");
+                isValidWord = false;
+                
+                break;
             }
+        }
         return isValidWord;
     }    
 }
